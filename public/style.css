@@ -90,6 +90,7 @@ ul {
 
 .chat.page {
   display: none;
+  position: relative;
 }
 
 /* Font */
@@ -113,12 +114,14 @@ ul {
 
 .chatArea {
   height: 100%;
+  width: 20%;
+  float: right;
   padding-bottom: 60px;
+  border: 2px solid #eee;
 }
 
 .messages {
   height: 100%;
-  margin: 30px 0 0 0;
   overflow-y: scroll;
   padding: 10px 20px 30px 20px;
 }
@@ -150,9 +153,69 @@ ul {
 
 div.title {
   top: 0;
-  position: fixed;
   text-align: right;
   background: #eee;
   width: 100%;
   padding: 10px;
+}
+
+/* canvas */
+.whiteboard {
+  height: 100%;
+  width: 80%;
+  /*position: absolute;*/
+  float: left;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+}
+
+.colors {
+  position: fixed;
+}
+
+.color {
+  display: inline-block;
+  height: 48px;
+  width: 48px;
+}
+
+.color.black { background-color: black; }
+.color.red { background-color: red; }
+.color.green { background-color: green; }
+.color.blue { background-color: blue; }
+.color.yellow { background-color: yellow; }
+
+.prepare{
+    float: left;
+    height: 100%;
+    width: 80%;
+    background-color: rgba(0, 0, 0, 0.27);
+}
+
+#startgame{
+    left: 30%;
+    top: 50%;
+    position: absolute;
+    font-size: 25px;
+    background-color: black;
+    background-color: #8b8b8B;
+    padding: 10px;
+    color: white;
+    border-radius: 10px;
+}
+.users{
+    position: relative;
+    left: 10%;
+    top: 20%;
+}
+
+.users span{
+    margin: 0 10px 0 10px;
+    font-size: 26px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 10px;
+    border: 1px solid;
 }

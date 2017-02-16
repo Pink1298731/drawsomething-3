@@ -14,6 +14,10 @@ $(function(){
   	var $inputMessage = $('.inputMessage'); // Input message input box
   	var $messages = $('.messages'); // Messages area
   	var $userNum = $('.title span');
+  	var $canvas=$('#canvas');
+  	var $preparePage=$('.prepare');
+	var $button=$('#startgame');
+	var $userDiv=$('.users');
 
   	// Prompt for setting a username
 	var username;
@@ -23,6 +27,8 @@ $(function(){
  	var lastTypingTime;
 
 	var socket = io();
+
+	$canvas.hide();
 
 	function modParticipantsMessage(data){
 		$userNum.text(data.numUsers);
@@ -162,6 +168,43 @@ $(function(){
 		return COLORS[index];
 	}
 
+	function startPaint(words){
+		alert("你要画的词语是"+words);
+	}
+
+	function startGuess(username){
+
+		log(username+" 负责开始画了");
+	}
+
+	function showUsers(data){
+		var list=data.startuser;
+		data.usernames.map(function (username){
+			addUserElement(username);
+		});
+		list.map(function (username){
+			updateUser(username);
+		})
+	}
+
+	function addUserElement(username){
+		var $user=$('<span/>').text(username);
+		$userDiv.append($user);
+	}
+
+	function updateUser(username){
+		var userspans=$('.users span');
+		userspans.map(function(item){
+			if($(this).text()===username){
+				$(this).css('background-color',"white");
+			}
+		});
+	}
+
+	function addUser(data){
+		addUserElement(data.username);
+	}
+
 	$window.keydown(function(event){
 		// Auto-focus the current input when a key is typed
 	    if (!(event.ctrlKey || event.metaKey || event.altKey)) {
@@ -193,11 +236,19 @@ $(function(){
 	   $inputMessage.focus();
 	});
 
+	$button.click(function(){
+		$button.css("background-color","#8b8b8B");
+		$button.text("等待开始");
+		socket.emit("start game",{
+			username:username
+		})
+	});
+
 	// Socket events
 
 	socket.on('login',function(data){
 		connected=true;
-		alert("登陆成功");
+		showUsers(data);
 		// Display the welcome message
 	    var message = "Welcome to Socket.IO Chat – ";
 	    log(message, {
@@ -207,8 +258,10 @@ $(function(){
 	});
 
 	socket.on('user joined',function(data){
+		if(!username)return;
 		log(data.username + ' joined');
     	modParticipantsMessage(data);
+    	addUser(data);
 	});
 
 	socket.on('new message',function(data){
@@ -222,6 +275,29 @@ $(function(){
 	// Whenever the server emits 'stop typing', kill the typing message
 	socket.on('stop typing', function (data) {
 	    removeChatTyping(data);
+	});
+
+	socket.on('one start',function(data){
+		updateUser(data.username);
+	});
+
+	socket.on('started',function(){
+		$preparePage.hide();
+		$canvas.show();
+	})
+
+
+	socket.on('guess right',function(data){
+		log(data.username + ' guess right');
+	});
+
+	socket.on('guess',function(data){
+		if(data.username===username){
+			startPaint(data.words);
+		}
+		else{
+			startGuess(data.username);
+		}
 	});
 
 	socket.on('user left', function(data){
